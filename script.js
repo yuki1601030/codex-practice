@@ -1,6 +1,7 @@
 // HTMLの入力欄やボタンをJavaScriptで使えるように取得します
 const destinationInput = document.getElementById("destination");
 const memoInput = document.getElementById("memo");
+const prioritySelect = document.getElementById("priority");
 const addButton = document.getElementById("addButton");
 const memoList = document.getElementById("memoList");
 
@@ -29,6 +30,11 @@ const createMemoItem = (travelMemo) => {
   const memoText = document.createElement("p");
   memoText.textContent = travelMemo.memo;
 
+  // 優先度を表示します。古い保存データに優先度がない場合は「中」にします
+  const priorityText = document.createElement("p");
+  priorityText.className = "memo-priority";
+  priorityText.textContent = `優先度：${travelMemo.priority || "中"}`;
+
   // この旅行メモを削除するためのボタンを作ります
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
@@ -42,9 +48,10 @@ const createMemoItem = (travelMemo) => {
     listItem.remove();
   });
 
-  // li要素の中に旅行先、メモ、削除ボタンを入れます
+  // li要素の中に旅行先、メモ、優先度、削除ボタンを入れます
   listItem.appendChild(title);
   listItem.appendChild(memoText);
+  listItem.appendChild(priorityText);
   listItem.appendChild(deleteButton);
 
   return listItem;
@@ -60,6 +67,7 @@ addButton.addEventListener("click", () => {
   // 入力された文字の前後にある余分な空白を取り除きます
   const destination = destinationInput.value.trim();
   const memo = memoInput.value.trim();
+  const priority = prioritySelect.value;
 
   // 旅行先かメモが空の場合は、一覧に追加しないで知らせます
   if (destination === "" || memo === "") {
@@ -68,10 +76,12 @@ addButton.addEventListener("click", () => {
   }
 
   // 保存する旅行メモのデータを作ります。idは削除するときにどのメモか見分けるための番号です
+  // priorityも入れるので、ページ更新後も優先度がlocalStorageから読み込まれます
   const travelMemo = {
     id: Date.now(),
     destination,
     memo,
+    priority,
   };
 
   // 配列に追加してからlocalStorageに保存します
@@ -84,5 +94,6 @@ addButton.addEventListener("click", () => {
   // 次の入力がしやすいように入力欄を空にします
   destinationInput.value = "";
   memoInput.value = "";
+  prioritySelect.value = "中";
   destinationInput.focus();
 });

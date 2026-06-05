@@ -1,0 +1,103 @@
+/* ページ全体の基本設定です */
+body {
+  margin: 0;
+  font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+  background: #f4f8fb;
+  color: #243447;
+}
+
+/* アプリ全体を中央に配置します */
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+/* 画面上部のタイトルです */
+h1 {
+  margin: 0 0 24px;
+  text-align: center;
+  color: #1f6f8b;
+}
+
+/* 入力フォームと一覧をカードのように見せます */
+.form-card,
+.list-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(31, 111, 139, 0.12);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+/* 入力欄の見出しです */
+label {
+  display: block;
+  margin: 16px 0 8px;
+  font-weight: bold;
+}
+
+/* 入力欄とメモ欄の共通デザインです */
+input,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c9d6df;
+  border-radius: 10px;
+  font-size: 1rem;
+  padding: 12px;
+}
+
+/* メモ欄は縦方向だけサイズ変更できるようにします */
+textarea {
+  resize: vertical;
+}
+
+/* 追加ボタンのデザインです */
+button {
+  width: 100%;
+  margin-top: 20px;
+  border: none;
+  border-radius: 10px;
+  background: #1f6f8b;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 12px;
+}
+
+/* ボタンにマウスを重ねたときの色です */
+button:hover {
+  background: #185b73;
+}
+
+/* 一覧の余白を整えます */
+.memo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 追加された旅行メモ1件分の見た目です */
+.memo-item {
+  border-left: 4px solid #1f6f8b;
+  background: #eef7fb;
+  border-radius: 10px;
+  margin-top: 12px;
+  padding: 14px 16px;
+}
+
+.memo-item h3 {
+  margin: 0 0 8px;
+}
+
+.memo-item p {
+  margin: 0;
+  white-space: pre-wrap;
+}

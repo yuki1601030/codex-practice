@@ -16,6 +16,31 @@ const saveMemos = () => {
   localStorage.setItem(storageKey, JSON.stringify(travelMemos));
 };
 
+// 優先度が高いメモから順番に表示するための点数です
+const priorityOrder = {
+  高: 1,
+  中: 2,
+  低: 3,
+};
+
+// 一覧をいったん空にして、優先度順に並べ直してから表示します
+const renderMemos = () => {
+  memoList.innerHTML = "";
+
+  [...travelMemos]
+    .sort((a, b) => {
+      // 古い保存データに優先度がない場合は「中」として扱います
+      const priorityA = priorityOrder[a.priority || "中"];
+      const priorityB = priorityOrder[b.priority || "中"];
+
+      // 優先度が同じ場合は、追加された順番が変わらないようにします
+      return priorityA - priorityB || a.id - b.id;
+    })
+    .forEach((travelMemo) => {
+      memoList.appendChild(createMemoItem(travelMemo));
+    });
+};
+
 // 旅行メモ1件分のli要素を作ります
 const createMemoItem = (travelMemo) => {
   // 一覧に追加するためのli要素を作ります
@@ -45,7 +70,7 @@ const createMemoItem = (travelMemo) => {
   deleteButton.addEventListener("click", () => {
     travelMemos = travelMemos.filter((memo) => memo.id !== travelMemo.id);
     saveMemos();
-    listItem.remove();
+    renderMemos();
   });
 
   // li要素の中に旅行先、メモ、優先度、削除ボタンを入れます
@@ -58,9 +83,7 @@ const createMemoItem = (travelMemo) => {
 };
 
 // 保存済みの旅行メモを画面に表示します
-travelMemos.forEach((travelMemo) => {
-  memoList.appendChild(createMemoItem(travelMemo));
-});
+renderMemos();
 
 // 追加ボタンが押されたときに実行する処理です
 addButton.addEventListener("click", () => {
@@ -88,8 +111,8 @@ addButton.addEventListener("click", () => {
   travelMemos.push(travelMemo);
   saveMemos();
 
-  // 完成したli要素を一覧に追加します
-  memoList.appendChild(createMemoItem(travelMemo));
+  // 優先度順になるように一覧を並べ直して表示します
+  renderMemos();
 
   // 次の入力がしやすいように入力欄を空にします
   destinationInput.value = "";

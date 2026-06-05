@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家族旅行メモ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <!-- 画面上部に表示するアプリのタイトルです -->
+    <h1>家族旅行メモ</h1>
+
+    <!-- 旅行先とメモを入力するフォームです -->
+    <section class="form-card" aria-labelledby="form-title">
+      <h2 id="form-title">旅行の予定を追加</h2>
+
+      <label for="destination">旅行先の名前</label>
+      <input id="destination" type="text" placeholder="例：沖縄" autocomplete="off">
+
+      <label for="memo">メモ</label>
+      <textarea id="memo" rows="4" placeholder="例：海で遊ぶ、写真をたくさん撮る"></textarea>
+
+      <button id="addButton" type="button">追加</button>
+    </section>
+
+    <!-- 追加した内容がここに一覧表示されます -->
+    <section class="list-card" aria-labelledby="list-title">
+      <h2 id="list-title">旅行メモ一覧</h2>
+      <ul id="memoList" class="memo-list"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

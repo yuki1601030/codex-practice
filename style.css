@@ -42,9 +42,10 @@ label {
   font-weight: bold;
 }
 
-/* 入力欄とメモ欄の共通デザインです */
+/* 入力欄、メモ欄、優先度の選択欄の共通デザインです */
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #c9d6df;
@@ -100,6 +101,14 @@ button:hover {
 .memo-item p {
   margin: 0;
   white-space: pre-wrap;
+}
+
+/* 優先度をメモ本文の下に少し小さく表示します */
+.memo-priority {
+  color: #1f6f8b;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-top: 8px;
 }
 
 /* 削除ボタンは追加ボタンより小さく、注意が伝わる色にします */

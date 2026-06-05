@@ -28,9 +28,21 @@ addButton.addEventListener("click", () => {
   const memoText = document.createElement("p");
   memoText.textContent = memo;
 
-  // li要素の中に旅行先とメモを入れます
+  // この旅行メモを削除するためのボタンを作ります
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "delete-button";
+  deleteButton.textContent = "削除";
+
+  // 削除ボタンが押されたら、このli要素だけを一覧から消します
+  deleteButton.addEventListener("click", () => {
+    listItem.remove();
+  });
+
+  // li要素の中に旅行先、メモ、削除ボタンを入れます
   listItem.appendChild(title);
   listItem.appendChild(memoText);
+  listItem.appendChild(deleteButton);
 
   // 完成したli要素を一覧に追加します
   memoList.appendChild(listItem);

@@ -101,3 +101,16 @@ button:hover {
   margin: 0;
   white-space: pre-wrap;
 }
+
+/* 削除ボタンは追加ボタンより小さく、注意が伝わる色にします */
+.delete-button {
+  width: auto;
+  margin-top: 12px;
+  background: #d9534f;
+  padding: 8px 14px;
+}
+
+/* 削除ボタンにマウスを重ねたときの色です */
+.delete-button:hover {
+  background: #b9433f;
+}

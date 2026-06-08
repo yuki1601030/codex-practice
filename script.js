@@ -77,6 +77,39 @@ const createSelect = (id, options, selectedValue) => {
   return select;
 };
 
+
+// Googleマップ検索URLを作ります。Google Maps APIは使わず、旅行先名を安全にURLへ入れます
+const createGoogleMapsSearchUrl = (destination) => {
+  const searchText = destination.trim();
+  return `https://www.google.com/maps/search/${encodeURIComponent(searchText)}`;
+};
+
+// 地図リンクを新しいタブで安全に開くための共通設定を入れます
+const setMapLinkAttributes = (link, destination) => {
+  link.href = createGoogleMapsSearchUrl(destination);
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.setAttribute("aria-label", `${destination}をGoogleマップで検索する`);
+};
+
+// 旅行先名そのものをクリックできるGoogleマップ検索リンクにします
+const createDestinationMapLink = (destination) => {
+  const link = document.createElement("a");
+  link.className = "destination-link";
+  link.textContent = destination;
+  setMapLinkAttributes(link, destination);
+  return link;
+};
+
+// カード内に置く、指でも押しやすい「地図で見る」ボタン風リンクを作ります
+const createMapButton = (destination) => {
+  const link = document.createElement("a");
+  link.className = "map-button";
+  link.textContent = "地図で見る";
+  setMapLinkAttributes(link, destination);
+  return link;
+};
+
 // ステータス切り替えボタンで次に入れる値を返します
 const getNextStatus = (currentStatus) => (currentStatus === "行った" ? "行きたい" : "行った");
 
@@ -191,12 +224,17 @@ const createMemoItem = (travelMemo) => {
   const header = document.createElement("div");
   header.className = "memo-header";
 
-  // 旅行先の見出しを作ります
+  // 旅行先の見出しを作ります。旅行先名はGoogleマップ検索リンクとしてクリックできます
   const title = document.createElement("h4");
-  title.textContent = travelMemo.destination;
+  title.appendChild(createDestinationMapLink(travelMemo.destination));
+
+  const headerMeta = document.createElement("div");
+  headerMeta.className = "memo-header-meta";
+  headerMeta.appendChild(createTimeBadge(travelMemo.timeOfDay));
+  headerMeta.appendChild(createMapButton(travelMemo.destination));
 
   header.appendChild(title);
-  header.appendChild(createTimeBadge(travelMemo.timeOfDay));
+  header.appendChild(headerMeta);
 
   // メモ、優先度、ステータスをカードの中で読みやすく表示します
   const memoText = createDetailRow("メモ", travelMemo.memo);
@@ -250,7 +288,7 @@ const createMemoItem = (travelMemo) => {
   actions.appendChild(statusButton);
   actions.appendChild(deleteButton);
 
-  // li要素の中に旅行先、時間帯、メモ、優先度、ステータス、操作ボタンを入れます
+  // li要素の中に旅行先、時間帯、地図リンク、メモ、優先度、ステータス、操作ボタンを入れます
   listItem.appendChild(header);
   listItem.appendChild(memoText);
   listItem.appendChild(priorityText);

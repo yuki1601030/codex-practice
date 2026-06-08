@@ -3,6 +3,7 @@ const destinationInput = document.getElementById("destination");
 const memoInput = document.getElementById("memo");
 const prioritySelect = document.getElementById("priority");
 const addButton = document.getElementById("addButton");
+const searchInput = document.getElementById("searchInput");
 const memoList = document.getElementById("memoList");
 
 // localStorageに保存するときの名前です。同じ名前を使って読み書きします
@@ -23,11 +24,25 @@ const priorityOrder = {
   低: 3,
 };
 
-// 一覧をいったん空にして、優先度順に並べ直してから表示します
+// 一覧をいったん空にして、検索条件に合うものだけを優先度順に並べ直してから表示します
 const renderMemos = () => {
   memoList.innerHTML = "";
 
+  // 検索欄の文字を小文字にそろえると、大文字小文字を気にせず探せます
+  const searchText = searchInput.value.trim().toLowerCase();
+
   [...travelMemos]
+    .filter((travelMemo) => {
+      // 検索欄が空なら、すべての旅行メモを表示します
+      if (searchText === "") {
+        return true;
+      }
+
+      // 旅行先名またはメモ内容に検索文字が含まれているか確認します
+      const destination = travelMemo.destination.toLowerCase();
+      const memo = travelMemo.memo.toLowerCase();
+      return destination.includes(searchText) || memo.includes(searchText);
+    })
     .sort((a, b) => {
       // 古い保存データに優先度がない場合は「中」として扱います
       const priorityA = priorityOrder[a.priority || "中"];
@@ -84,6 +99,9 @@ const createMemoItem = (travelMemo) => {
 
 // 保存済みの旅行メモを画面に表示します
 renderMemos();
+
+// 検索欄に文字が入力されたら、保存データは変えずに表示だけ絞り込みます
+searchInput.addEventListener("input", renderMemos);
 
 // 追加ボタンが押されたときに実行する処理です
 addButton.addEventListener("click", () => {

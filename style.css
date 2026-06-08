@@ -101,7 +101,8 @@ button:hover {
 input:focus,
 textarea:focus,
 select:focus,
-button:focus-visible {
+button:focus-visible,
+a:focus-visible {
   outline: 3px solid rgba(31, 111, 139, 0.25);
   outline-offset: 2px;
 }
@@ -198,6 +199,50 @@ button:focus-visible {
   color: #174f64;
   font-size: 1.24rem;
   line-height: 1.3;
+  min-width: 0;
+}
+
+/* 時間帯と地図ボタンを右側でまとめ、カード内がごちゃつかないようにします */
+.memo-header-meta {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* 旅行先名リンクは見出しらしさを残しつつ、クリックできることが分かる見た目にします */
+.destination-link {
+  color: inherit;
+  text-decoration-color: rgba(31, 111, 139, 0.35);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.destination-link:hover {
+  color: #1f6f8b;
+}
+
+/* 地図ボタンは<a>要素ですが、指で押しやすいボタンとして見せます */
+.map-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 999px;
+  background: #0f9d58;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: bold;
+  line-height: 1.2;
+  padding: 9px 14px;
+  text-decoration: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.map-button:hover {
+  background: #0b7f47;
 }
 
 /* 時間帯は小さなラベルにして、情報が増えてもごちゃつかないようにします */
@@ -380,8 +425,17 @@ button:focus-visible {
     font-size: 1.16rem;
   }
 
+  .memo-header-meta {
+    justify-content: flex-start;
+  }
+
   .time-badge {
     width: fit-content;
+  }
+
+  .map-button {
+    min-height: 48px;
+    padding: 11px 16px;
   }
 
   /* 狭い画面ではラベルと値を縦に並べます */

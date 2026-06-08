@@ -35,6 +35,11 @@
     <!-- 追加した内容がここに一覧表示されます -->
     <section class="list-card" aria-labelledby="list-title">
       <h2 id="list-title">旅行メモ一覧</h2>
+
+      <!-- 入力した文字で、旅行先名またはメモ内容に合う旅行メモだけを表示します -->
+      <label for="searchInput" class="search-label">検索</label>
+      <input id="searchInput" class="search-input" type="search" placeholder="旅行先名・メモ内容で検索" autocomplete="off">
+
       <ul id="memoList" class="memo-list"></ul>
     </section>
   </main>

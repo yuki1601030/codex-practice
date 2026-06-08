@@ -21,6 +21,10 @@
       <label for="memo">メモ</label>
       <textarea id="memo" rows="4" placeholder="例：海で遊ぶ、写真をたくさん撮る"></textarea>
 
+      <!-- 想定費用は数字だけ入力できます。空欄のまま追加すると0円として保存します -->
+      <label for="estimatedCost">想定費用（円）</label>
+      <input id="estimatedCost" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="例：3000" autocomplete="off">
+
       <!-- 旅行の日程を選ぶ欄です。決まっていない場合は「未定」を選べます -->
       <label for="day">日程</label>
       <select id="day">
@@ -61,6 +65,12 @@
     <!-- 追加した内容がここに一覧表示されます -->
     <section class="list-card" aria-labelledby="list-title">
       <h2 id="list-title">日程別プラン</h2>
+
+      <!-- 登録済みの旅行メモすべてから、全体と日程別の予算合計を表示します -->
+      <section class="budget-summary" aria-label="予算の合計">
+        <p class="total-budget" id="totalBudget">合計予算：0円</p>
+        <div class="day-budget-list" id="dayBudgetList"></div>
+      </section>
 
       <!-- 入力した文字で、旅行先名またはメモ内容に合う旅行メモだけを表示します -->
       <label for="searchInput" class="search-label">検索</label>

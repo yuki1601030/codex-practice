@@ -21,6 +21,25 @@
       <label for="memo">メモ</label>
       <textarea id="memo" rows="4" placeholder="例：海で遊ぶ、写真をたくさん撮る"></textarea>
 
+      <!-- 旅行の日程を選ぶ欄です。決まっていない場合は「未定」を選べます -->
+      <label for="day">日程</label>
+      <select id="day">
+        <option value="1日目">1日目</option>
+        <option value="2日目">2日目</option>
+        <option value="3日目">3日目</option>
+        <option value="未定" selected>未定</option>
+      </select>
+
+      <!-- 旅行中の時間帯を選ぶ欄です。まだ決まっていない場合は「未定」を選べます -->
+      <label for="timeOfDay">時間帯</label>
+      <select id="timeOfDay">
+        <option value="朝">朝</option>
+        <option value="昼">昼</option>
+        <option value="午後">午後</option>
+        <option value="夜">夜</option>
+        <option value="未定" selected>未定</option>
+      </select>
+
       <!-- 旅行メモの大切さを選ぶ欄です -->
       <label for="priority">優先度</label>
       <select id="priority">
@@ -41,7 +60,7 @@
 
     <!-- 追加した内容がここに一覧表示されます -->
     <section class="list-card" aria-labelledby="list-title">
-      <h2 id="list-title">旅行メモ一覧</h2>
+      <h2 id="list-title">日程別プラン</h2>
 
       <!-- 入力した文字で、旅行先名またはメモ内容に合う旅行メモだけを表示します -->
       <label for="searchInput" class="search-label">検索</label>

@@ -107,7 +107,41 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-/* 検索欄は一覧の見出しのすぐ下に置き、スマホでも押しやすくします */
+/* 合計予算を一覧の上部で目立たせ、旅行全体の費用感をすぐ見られるようにします */
+.budget-summary {
+  border: 1px solid #cfe7f1;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eef9fc 0%, #ffffff 100%);
+  margin: 0 0 18px;
+  padding: 16px;
+}
+
+.total-budget {
+  margin: 0 0 12px;
+  color: #174f64;
+  font-size: clamp(1.2rem, 4vw, 1.45rem);
+  font-weight: bold;
+}
+
+/* 日程別の小計はカード状にして、1日目・2日目・3日目・未定を見比べやすくします */
+.day-budget-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.day-budget {
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1f6f8b;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+}
+
+/* 検索欄は予算サマリーの下に置き、スマホでも押しやすくします */
 .search-label {
   margin-top: 0;
 }
@@ -438,6 +472,10 @@ a:focus-visible {
     padding: 11px 16px;
   }
 
+  .day-budget-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   /* 狭い画面ではラベルと値を縦に並べます */
   .memo-detail {
     grid-template-columns: 1fr;
@@ -461,6 +499,10 @@ a:focus-visible {
 
 /* とても狭い画面では、さらに左右の余白を少しだけ小さくします */
 @media (max-width: 360px) {
+  .day-budget-list {
+    grid-template-columns: 1fr;
+  }
+
   .app {
     padding-left: 10px;
     padding-right: 10px;

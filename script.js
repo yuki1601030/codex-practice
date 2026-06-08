@@ -1,12 +1,15 @@
 // HTMLの入力欄やボタンをJavaScriptで使えるように取得します
 const destinationInput = document.getElementById("destination");
 const memoInput = document.getElementById("memo");
+const estimatedCostInput = document.getElementById("estimatedCost");
 const daySelect = document.getElementById("day");
 const timeOfDaySelect = document.getElementById("timeOfDay");
 const prioritySelect = document.getElementById("priority");
 const statusSelect = document.getElementById("status");
 const addButton = document.getElementById("addButton");
 const searchInput = document.getElementById("searchInput");
+const totalBudget = document.getElementById("totalBudget");
+const dayBudgetList = document.getElementById("dayBudgetList");
 const memoList = document.getElementById("memoList");
 
 // localStorageに保存するときの名前です。同じ名前を使って読み書きします
@@ -22,6 +25,29 @@ const priorityOrder = {
   中: 2,
   低: 3,
 };
+
+// 入力された費用から数字以外を取り除き、空欄や不正な値は0円として扱います
+const normalizeCost = (cost) => {
+  const digits = String(cost ?? "").replace(/\D/g, "");
+  return digits === "" ? 0 : Number(digits);
+};
+
+// 3,000円のように、日本円らしいカンマ区切りで表示します
+const formatYen = (cost) => `${normalizeCost(cost).toLocaleString("ja-JP")}円`;
+
+// 費用入力欄は数字だけ残すようにして、初心者にも分かりやすい制限にします
+const keepOnlyDigits = (input) => {
+  input.value = input.value.replace(/\D/g, "");
+};
+
+// 追加フォームと編集フォームの費用欄へ、同じ数字入力ルールを設定します
+const setupCostInput = (input) => {
+  input.inputMode = "numeric";
+  input.pattern = "[0-9]*";
+  input.addEventListener("input", () => keepOnlyDigits(input));
+};
+
+setupCostInput(estimatedCostInput);
 
 // 配列の何番目かを並び替え用の数字にします。知らない値は「未定」と同じ扱いにします
 const getOrder = (options, value) => {
@@ -39,6 +65,7 @@ const normalizeMemo = (travelMemo, index) => {
     memo: safeMemo.memo || "",
     day: dayOptions.includes(safeMemo.day) ? safeMemo.day : "未定",
     timeOfDay: timeOfDayOptions.includes(safeMemo.timeOfDay) ? safeMemo.timeOfDay : "未定",
+    estimatedCost: normalizeCost(safeMemo.estimatedCost),
     priority: safeMemo.priority || "中",
     status: safeMemo.status || "行きたい",
   };
@@ -144,9 +171,29 @@ const sortMemosForPlan = (memos) =>
     return timeOrder || priorityA - priorityB || a.id - b.id;
   });
 
+// すべての旅行メモを合計して、画面上部の予算サマリーを更新します
+const renderBudgetSummary = () => {
+  const total = travelMemos.reduce((sum, travelMemo) => sum + normalizeCost(travelMemo.estimatedCost), 0);
+  totalBudget.textContent = `合計予算：${formatYen(total)}`;
+
+  dayBudgetList.innerHTML = "";
+
+  dayOptions.forEach((day) => {
+    const dayTotal = travelMemos
+      .filter((travelMemo) => travelMemo.day === day)
+      .reduce((sum, travelMemo) => sum + normalizeCost(travelMemo.estimatedCost), 0);
+
+    const dayBudget = document.createElement("p");
+    dayBudget.className = "day-budget";
+    dayBudget.textContent = `${day} 合計：${formatYen(dayTotal)}`;
+    dayBudgetList.appendChild(dayBudget);
+  });
+};
+
 // 一覧をいったん空にして、日程ごとのカードに分けて表示します
 const renderMemos = () => {
   memoList.innerHTML = "";
+  renderBudgetSummary();
 
   const filteredMemos = getFilteredMemos();
 
@@ -189,7 +236,7 @@ const createDaySection = (day, dayMemos) => {
   return sectionItem;
 };
 
-// カード内の「メモ」「優先度」「ステータス」を並べる行を作ります
+// カード内の「メモ」「想定費用」「優先度」「ステータス」などを並べる行を作ります
 const createDetailRow = (labelText, valueText) => {
   const row = document.createElement("p");
   row.className = "memo-detail";
@@ -236,8 +283,9 @@ const createMemoItem = (travelMemo) => {
   header.appendChild(title);
   header.appendChild(headerMeta);
 
-  // メモ、優先度、ステータスをカードの中で読みやすく表示します
+  // メモ、想定費用、優先度、ステータスをカードの中で読みやすく表示します
   const memoText = createDetailRow("メモ", travelMemo.memo);
+  const costText = createDetailRow("想定費用", formatYen(travelMemo.estimatedCost));
   const priorityText = createDetailRow("優先度", travelMemo.priority || "中");
   const statusText = createDetailRow("ステータス", travelMemo.status || "行きたい");
 
@@ -288,9 +336,10 @@ const createMemoItem = (travelMemo) => {
   actions.appendChild(statusButton);
   actions.appendChild(deleteButton);
 
-  // li要素の中に旅行先、時間帯、地図リンク、メモ、優先度、ステータス、操作ボタンを入れます
+  // li要素の中に旅行先、時間帯、地図リンク、メモ、想定費用、優先度、ステータス、操作ボタンを入れます
   listItem.appendChild(header);
   listItem.appendChild(memoText);
+  listItem.appendChild(costText);
   listItem.appendChild(priorityText);
   listItem.appendChild(statusText);
   listItem.appendChild(actions);
@@ -323,6 +372,16 @@ const createEditMemoItem = (travelMemo) => {
   memoEditInput.id = `edit-memo-${travelMemo.id}`;
   memoEditInput.rows = 4;
   memoEditInput.value = travelMemo.memo;
+
+  const costLabel = document.createElement("label");
+  costLabel.htmlFor = `edit-cost-${travelMemo.id}`;
+  costLabel.textContent = "想定費用（円）";
+
+  const costEditInput = document.createElement("input");
+  costEditInput.id = `edit-cost-${travelMemo.id}`;
+  costEditInput.type = "text";
+  costEditInput.value = normalizeCost(travelMemo.estimatedCost) || "";
+  setupCostInput(costEditInput);
 
   const dayLabel = document.createElement("label");
   dayLabel.htmlFor = `edit-day-${travelMemo.id}`;
@@ -368,6 +427,7 @@ const createEditMemoItem = (travelMemo) => {
   saveButton.addEventListener("click", () => {
     const destination = destinationEditInput.value.trim();
     const memo = memoEditInput.value.trim();
+    const estimatedCost = normalizeCost(costEditInput.value);
 
     if (destination === "" || memo === "") {
       alert("旅行先の名前とメモを入力してください。");
@@ -384,6 +444,7 @@ const createEditMemoItem = (travelMemo) => {
       ...travelMemos[memoIndex],
       destination,
       memo,
+      estimatedCost,
       day: dayEditSelect.value,
       timeOfDay: timeOfDayEditSelect.value,
       priority: priorityEditSelect.value,
@@ -408,6 +469,8 @@ const createEditMemoItem = (travelMemo) => {
   listItem.appendChild(destinationEditInput);
   listItem.appendChild(memoLabel);
   listItem.appendChild(memoEditInput);
+  listItem.appendChild(costLabel);
+  listItem.appendChild(costEditInput);
   listItem.appendChild(dayLabel);
   listItem.appendChild(dayEditSelect);
   listItem.appendChild(timeOfDayLabel);
@@ -435,6 +498,7 @@ addButton.addEventListener("click", () => {
   // 入力された文字の前後にある余分な空白を取り除きます
   const destination = destinationInput.value.trim();
   const memo = memoInput.value.trim();
+  const estimatedCost = normalizeCost(estimatedCostInput.value);
   const day = daySelect.value;
   const timeOfDay = timeOfDaySelect.value;
   const priority = prioritySelect.value;
@@ -447,11 +511,12 @@ addButton.addEventListener("click", () => {
   }
 
   // 保存する旅行メモのデータを作ります。idは編集や削除のときにどのメモか見分けるための番号です
-  // day、timeOfDay、priority、statusも入れるので、ページ更新後もlocalStorageから読み込まれます
+  // estimatedCost、day、timeOfDay、priority、statusも入れるので、ページ更新後もlocalStorageから読み込まれます
   const travelMemo = {
     id: Date.now(),
     destination,
     memo,
+    estimatedCost,
     day,
     timeOfDay,
     priority,
@@ -468,6 +533,7 @@ addButton.addEventListener("click", () => {
   // 次の入力がしやすいように入力欄を空にします
   destinationInput.value = "";
   memoInput.value = "";
+  estimatedCostInput.value = "";
   daySelect.value = "未定";
   timeOfDaySelect.value = "未定";
   prioritySelect.value = "中";
